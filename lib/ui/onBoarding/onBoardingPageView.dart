@@ -1,6 +1,8 @@
 // class cha: quản lý các page con. di chuyển qua lại giữa các page con.
 
 import 'package:fluter_app/ui/onBoarding/onBoardingChildPage.dart';
+import 'package:fluter_app/ui/start/startScreen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:fluter_app/ultils.emuns/OnboardingPagePosition.dart';
 
@@ -54,7 +56,11 @@ class _OnBoardingPageViewState extends State<OnBoardingPageView> {
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         ),
-        onNextPressed: () {},
+        onNextPressed: () => _pageController.animateToPage(
+          3,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        ),
       ),
     ];
   }
@@ -100,9 +106,20 @@ class _OnBoardingPageViewState extends State<OnBoardingPageView> {
         // ],
 
         //  truyền vào các widget con mà muốn pageView hiển thị.
-        children: _onBoardingContent().map((item) {
-          return OnBoardingChildPage(onboardingItem: item);
-        }).toList(),
+        children: [
+          ..._onBoardingContent().map((item) {
+            return OnBoardingChildPage(onboardingItem: item);
+          }),
+          StartScreen(
+            onBackPressed: () {
+              _pageController.animateToPage(
+                2,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            },
+          ),
+        ],
       ),
     );
   }

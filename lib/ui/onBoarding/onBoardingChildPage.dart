@@ -1,3 +1,4 @@
+import 'package:fluter_app/ui/start/startScreen.dart';
 import 'package:fluter_app/ultils.emuns/OnboardingPagePosition.dart';
 import 'package:flutter/material.dart';
 

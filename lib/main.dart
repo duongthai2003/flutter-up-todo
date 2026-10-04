@@ -1,6 +1,7 @@
 import 'package:fluter_app/ui/main/mainPage.dart';
 import 'package:fluter_app/ui/onBoarding/onBoardingPageView.dart';
 import 'package:fluter_app/ui/splash/splash.dart';
+import 'package:fluter_app/ui/start/startScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
         fontFamily: GoogleFonts.lato().fontFamily,
       ),
-      home: const MainPage(),
+      home: const OnBoardingPageView(),
     );
   }
 }
