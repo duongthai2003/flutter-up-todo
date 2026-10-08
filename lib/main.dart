@@ -1,3 +1,4 @@
+import 'package:fluter_app/ui/auth/login/login.dart';
 import 'package:fluter_app/ui/main/mainPage.dart';
 import 'package:fluter_app/ui/onBoarding/onBoardingPageView.dart';
 import 'package:fluter_app/ui/splash/splash.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
         fontFamily: GoogleFonts.lato().fontFamily,
       ),
-      home: const OnBoardingPageView(),
+      home: const Login(),
     );
   }
 }

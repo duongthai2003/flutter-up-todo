@@ -1,3 +1,5 @@
+import 'package:fluter_app/component/buttonBackIcon.dart';
+import 'package:fluter_app/component/OutlinedLoginButton.dart';
 import 'package:flutter/material.dart';
 
 class StartScreen extends StatelessWidget {
@@ -15,31 +17,17 @@ class StartScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 60,
-                children: [_buttonSkip(), _buildContent()],
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: 24),
+                    child: buttonBackIcon(onBackPressed: onBackPressed),
+                  ),
+                  _buildContent(),
+                ],
               ),
             ),
             _bottomButton(),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buttonSkip() {
-    return GestureDetector(
-      // GestureDetector là widget để xử lý các sự kiện touch mà không cần sử dụng button
-      onTap: () {
-        onBackPressed(); // gọi hàm onBackPressed
-      },
-      child: Container(
-        margin: EdgeInsets.only(left: 24),
-        width: 24,
-        height: 24,
-        alignment: Alignment.center, // căn giữa theo chiều ngang và chiều dọc
-        child: Icon(
-          Icons.arrow_back_ios_new,
-          color: Colors.white,
-          // size: 24,
         ),
       ),
     );
@@ -112,30 +100,4 @@ class StartScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-Widget OutlinedLoginButton({Widget? icon, required String label}) {
-  return OutlinedButton(
-    onPressed: () {},
-    child: Row(
-      spacing: 10,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (icon != null) icon,
-        Text(
-          label.toUpperCase(),
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            color: Colors.white,
-          ),
-        ),
-      ],
-    ),
-    style: OutlinedButton.styleFrom(
-      fixedSize: Size(double.infinity, 48),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-      side: BorderSide(color: Color(0xFF8875FF), width: 2),
-    ),
-  );
 }
