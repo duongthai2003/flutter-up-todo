@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fluter_app/ui/auth/login/login.dart';
 import 'package:fluter_app/ui/main/mainPage.dart';
 import 'package:fluter_app/ui/onBoarding/onBoardingPageView.dart';
@@ -6,8 +7,20 @@ import 'package:fluter_app/ui/start/startScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  // khởi tạo EasyLocalization để sử dụng đa ngôn ngữ
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(
+    // thêm các loại ngôn ngữ được hỗ trợ
+    EasyLocalization(
+      supportedLocales: const [Locale("en"), Locale("vi")],
+      path: "assets/translations",
+
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -22,6 +35,10 @@ class MyApp extends StatelessWidget {
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
         fontFamily: GoogleFonts.lato().fontFamily,
       ),
+      // khai báo các thuộc tính của EasyLocalization
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
       home: const SplashScreen(),
     );
   }

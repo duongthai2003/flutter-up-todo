@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fluter_app/component/buttonBackIcon.dart';
 import 'package:fluter_app/component/OutlinedLoginButton.dart';
 import 'package:fluter_app/ui/onBoarding/onBoardingPageView.dart';
@@ -35,7 +36,7 @@ class StartScreen extends StatelessWidget {
                 children: [SizedBox(height: 0), _buildContent()],
               ),
             ),
-            _bottomButton(),
+            _bottomButton(context),
           ],
         ),
       ),
@@ -53,15 +54,16 @@ class StartScreen extends StatelessWidget {
 
         children: [
           Text(
-            "Welcome to UpTodo",
+            "welcome_title".tr(),
             style: TextStyle(
               fontSize: 32,
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
+            textAlign: TextAlign.center,
           ),
           Text(
-            "Please login to your account or create new account to continue",
+            "welcome_description".tr(),
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w400,
@@ -74,7 +76,7 @@ class StartScreen extends StatelessWidget {
     );
   }
 
-  Widget _bottomButton() {
+  Widget _bottomButton(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 24).copyWith(bottom: 64),
 
@@ -86,10 +88,16 @@ class StartScreen extends StatelessWidget {
           ElevatedButton(
             // ElevatedButton tạo button nền màu
             onPressed: () {
-              print("login");
+              // lấy ra ngôn ngữ hiện tại
+              final curentLanguage = context.locale.toString();
+              if (curentLanguage == "en") {
+                context.setLocale(Locale("vi"));
+              } else {
+                context.setLocale(Locale("en"));
+              }
             },
             child: Text(
-              "Login".toUpperCase(),
+              "change_language".tr(),
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
@@ -104,7 +112,28 @@ class StartScreen extends StatelessWidget {
               minimumSize: Size.fromHeight(48),
             ),
           ),
-          OutlinedLoginButton(label: "Create account"),
+          ElevatedButton(
+            // ElevatedButton tạo button nền màu
+            onPressed: () {
+              print("login");
+            },
+            child: Text(
+              "login".tr().toUpperCase(),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF8875FF),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4),
+              ),
+              minimumSize: Size.fromHeight(48),
+            ),
+          ),
+          OutlinedLoginButton(label: "create_account".tr()),
         ],
       ),
     );
