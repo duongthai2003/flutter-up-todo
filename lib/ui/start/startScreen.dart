@@ -1,15 +1,30 @@
 import 'package:fluter_app/component/buttonBackIcon.dart';
 import 'package:fluter_app/component/OutlinedLoginButton.dart';
+import 'package:fluter_app/ui/onBoarding/onBoardingPageView.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StartScreen extends StatelessWidget {
-  final VoidCallback onBackPressed;
-  const StartScreen({super.key, required this.onBackPressed});
+  final bool isFirstTimeInstallApp;
+  const StartScreen({super.key, required this.isFirstTimeInstallApp});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF121212),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        leading: isFirstTimeInstallApp
+            ? buttonBackIcon(
+                onBackPressed: () => {
+                  // check xem có thể pop không, nếu có thì pop
+                  // pop là xoá màn hình hiện tại trở về màn hình trước
+
+                  if (Navigator.canPop(context)) {Navigator.pop(context)},
+                },
+              )
+            : null,
+      ),
       body: SafeArea(
         child: Column(
           children: [
@@ -17,13 +32,7 @@ class StartScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 60,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(left: 24),
-                    child: buttonBackIcon(onBackPressed: onBackPressed),
-                  ),
-                  _buildContent(),
-                ],
+                children: [SizedBox(height: 0), _buildContent()],
               ),
             ),
             _bottomButton(),

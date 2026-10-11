@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
         fontFamily: GoogleFonts.lato().fontFamily,
       ),
-      home: const Login(),
+      home: const SplashScreen(),
     );
   }
 }

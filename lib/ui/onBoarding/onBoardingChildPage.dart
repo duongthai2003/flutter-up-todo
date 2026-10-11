@@ -1,3 +1,4 @@
+import 'package:fluter_app/ui/onBoarding/onBoardingPageView.dart';
 import 'package:fluter_app/ui/start/startScreen.dart';
 import 'package:fluter_app/ultils.emuns/OnboardingPagePosition.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ typedef OnboardingItemType = ({
   int index,
   VoidCallback onBackPressed,
   VoidCallback onNextPressed,
+  VoidCallback onSkipPressed,
 });
 
 class OnBoardingChildPage extends StatelessWidget {
@@ -39,7 +41,7 @@ class OnBoardingChildPage extends StatelessWidget {
             Expanded(
               child: Column(
                 children: [
-                  _buildSkipButton(),
+                  _buildSkipButton(context),
                   _buildOnBoardingImage(),
                   _buildOnBoardingPageControl(),
                   _buildOnBoardingTitleAndContent(),
@@ -53,13 +55,14 @@ class OnBoardingChildPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSkipButton() {
+  //context là vị trí của widget hiện tại trong cây widget. Flutter dùng nó để biết bạn đang đứng ở màn nào
+  Widget _buildSkipButton(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(top: 14),
       alignment: Alignment.centerLeft,
 
       child: TextButton(
-        onPressed: () => {},
+        onPressed: () => {onboardingItem.onSkipPressed()},
         child: Text(
           "Skip",
           style: TextStyle(
@@ -159,16 +162,18 @@ class OnBoardingChildPage extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          TextButton(
-            onPressed: () => onboardingItem.onBackPressed(),
-            child: Text(
-              "Back",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white.withValues(alpha: 0.44),
-              ),
-            ),
-          ),
+          onboardingItem.index == 0
+              ? const SizedBox.shrink()
+              : TextButton(
+                  onPressed: () => onboardingItem.onBackPressed(),
+                  child: Text(
+                    "Back",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white.withValues(alpha: 0.44),
+                    ),
+                  ),
+                ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(0xFF8875FF),
