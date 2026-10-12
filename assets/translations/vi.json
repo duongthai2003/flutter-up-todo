@@ -3,5 +3,15 @@
     "welcome_description": "Vui lòng đăng nhập vào tài khoản của bạn hoặc tạo tài khoản mới để tiếp tục",
     "change_language": "Đổi ngôn ngữ",
     "login": "Đăng nhập",
-    "create_account": "Tạo tài khoản"
+    "create_account": "Tạo tài khoản",
+    "cancel": "Hủy",
+    "category":{
+        "create_new_category": "Tạo danh mục",
+        "edit_category": "Sửa danh mục",
+        "category_name": "Tên danh mục",
+        "category_icon": "Icon danh mục",
+        "choose_icon_from_library": "Chọn icon từ thư viện",
+        "create_category": "Tạo danh mục"
+    }
+
 }

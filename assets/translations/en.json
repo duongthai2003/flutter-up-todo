@@ -3,5 +3,15 @@
     "welcome_description": "Please login to your account or create new account to continue",
     "change_language": "Change Language",
     "login": "Login",
-    "create_account": "Create Account"
+    "create_account": "Create Account",
+    "cancel": "Cancel",
+    "category":{
+        "create_new_category": "Create new category",
+        "edit_category": "Edit category",
+        "category_name": "Category name",
+        "category_icon": "Category icon",
+        "choose_icon_from_library": "Choose icon from library",
+        "create_category": "Create Category"
+    }
+
 }

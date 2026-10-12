@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fluter_app/ui/auth/login/login.dart';
+import 'package:fluter_app/ui/category/createOrEditCategory.dart';
 import 'package:fluter_app/ui/main/mainPage.dart';
 import 'package:fluter_app/ui/onBoarding/onBoardingPageView.dart';
 import 'package:fluter_app/ui/splash/splash.dart';
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
-      home: const SplashScreen(),
+      home: const CreateOrEditCategory(),
     );
   }
 }
