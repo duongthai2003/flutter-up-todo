@@ -1,0 +1,11 @@
+# config để tự động generate file realm.dart từ file entities.dart
+# để cho nhanh khi build realm
+targets:
+  $default:
+    builders:
+      realm|realm_generator:
+        generate_for:
+          include:
+            - lib/entities/*.dart
+          exclude:
+            - lib/entities/*.realm.dart

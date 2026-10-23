@@ -11,7 +11,10 @@
         "category_name": "Tên danh mục",
         "category_icon": "Icon danh mục",
         "choose_icon_from_library": "Chọn icon từ thư viện",
-        "create_category": "Tạo danh mục"
+        "create_category": "Tạo danh mục",
+        "background_color": "Màu nền icon",
+        "icon_and_text_color": "Màu icon và text",
+        "preview_category": "Xem trước danh mục"
     }
 
 }

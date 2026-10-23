@@ -11,7 +11,10 @@
         "category_name": "Category name",
         "category_icon": "Category icon",
         "choose_icon_from_library": "Choose icon from library",
-        "create_category": "Create Category"
+        "create_category": "Create Category",
+        "background_color": "Background icon",
+        "icon_and_text_color": "Icon and text color",
+        "preview_category": "Preview category"
     }
 
 }

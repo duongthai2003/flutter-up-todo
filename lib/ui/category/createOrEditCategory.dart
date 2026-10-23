@@ -1,5 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:fluter_app/entities/category_realm_entity.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_iconpicker/Models/configuration.dart';
+import 'package:flutter_iconpicker/flutter_iconpicker.dart';
+import 'package:realm/realm.dart';
 
 class CreateOrEditCategory extends StatefulWidget {
   const CreateOrEditCategory({super.key});
@@ -10,25 +15,25 @@ class CreateOrEditCategory extends StatefulWidget {
 
 class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
   final _nameCategoryController = TextEditingController();
+  //  khai báo màu sắc cho danh mục
+  // final List<Color> _colorsDataSource = [
+  //   const Color(0xFFC9CC41),
 
-  final List<Color> _colorsDataSource = [
-    const Color(0xFFC9CC41),
-
-    const Color(0xFF66CC41),
-    const Color(0xFF41CCA7),
-    const Color(0xFF4181CC),
-    const Color(0xFF41A2CC),
-    const Color(0xFFCC8441),
-    const Color(0xFF9741CC),
-    const Color(0xFFCC4173),
-  ];
+  //   const Color(0xFF66CC41),
+  //   const Color(0xFF41CCA7),
+  //   const Color(0xFF4181CC),
+  //   const Color(0xFF41A2CC),
+  //   const Color(0xFFCC8441),
+  //   const Color(0xFF9741CC),
+  //   const Color(0xFFCC4173),
+  // ];
   //  nếu muốn gán luôn khi ở phần trên khai báo thì dùng 1 trong 3 cách :
-  // 1. late Color? selectedColor = _colorsDataSource[0];
+  // 1. late Color? backgroundCategoryColor = _colorsDataSource[0];
   // 2. khai báo _colorsDataSource  là static const
   // 3. khai báo trong initState()
   // ==> nếu khoognn dùng các cách trên thì  nó báo lỗi vì: Khi tạo object, các initializer của field chạy trước constructor và trước initState. Ở thời điểm đó Dart chưa cho phép dùng this hay field khác của cùng instance, kể cả khi field đó khai báo phía trên. Lý do là thứ tự khởi tạo field không được phép phụ thuộc lẫn nhau.
 
-  late Color? selectedColor = _colorsDataSource[0];
+  late Color backgroundCategoryColor = Colors.white.withValues(alpha: 0.20);
 
   // khai báo 1 lần khi chạy lần đầu tiên
   // @override
@@ -45,8 +50,10 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
   //     const Color(0xFF9741CC),
   //     const Color(0xFFCC4173),
   //   ]);
-  //   selectedColor = _colorsDataSource[0];
+  //   backgroundCategoryColor = _colorsDataSource[0];
   // }
+  IconPickerIcon? _iconSelected;
+  late Color iconAndTextColor = Colors.white;
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +91,8 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
                 _categoryNameField(),
                 _categoryIconField(),
                 _categoryColor(),
+                _IconAndTextCategoryColor(),
+                _previewCategory(),
               ],
             ),
           ),
@@ -114,6 +123,9 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
                   borderSide: BorderSide(width: 1, color: Color(0xF979797)),
                 ),
               ),
+              onChanged: (String? value) {
+                setState(() {});
+              },
             ),
           ),
         ],
@@ -131,7 +143,7 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
           _titleField("category.category_icon".tr()),
           GestureDetector(
             onTap: () {
-              print("choose icon from library");
+              _chooseIcon();
             },
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -140,14 +152,16 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
                 color: Colors.white.withValues(alpha: 0.20),
               ),
 
-              child: Text(
-                "category.choose_icon_from_library".tr(),
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.87),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
+              child: _iconSelected != null
+                  ? Icon(_iconSelected?.data, color: iconAndTextColor, size: 26)
+                  : Text(
+                      "category.choose_icon_from_library".tr(),
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.87),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
             ),
           ),
         ],
@@ -162,41 +176,52 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _titleField("category.category_icon".tr()),
-
-          Container(
-            margin: EdgeInsets.only(top: 10),
-            width: double.infinity,
-            height: 36,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal, // chiều cuộn ngang
-              itemBuilder: (context, index) {
-                final colorItem = _colorsDataSource[index];
-                final isSelected = selectedColor == colorItem;
-                return GestureDetector(
-                  onTap: () {
-                    print("click on: ${index}");
-                    setState(() {
-                      selectedColor = colorItem;
-                    });
-                  },
-                  child: Container(
-                    width: 36,
-                    height: 36,
-                    margin: EdgeInsets.only(right: 12),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(36 / 2),
-                      color: colorItem,
-                    ),
-                    child: isSelected
-                        ? Icon(Icons.check, color: Colors.white)
-                        : null,
-                  ),
-                );
-              },
-              itemCount: _colorsDataSource.length,
+          _titleField("category.background_color".tr()),
+          GestureDetector(
+            onTap: _onChooseCategoryBackgroundColor,
+            child: Container(
+              width: 36,
+              height: 36,
+              margin: EdgeInsets.only(right: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(36 / 2),
+                color: backgroundCategoryColor,
+              ),
             ),
           ),
+          // Container(
+          //   margin: EdgeInsets.only(top: 10),
+          //   width: double.infinity,
+          //   height: 36,
+          //   child: ListView.builder(
+          //     scrollDirection: Axis.horizontal, // chiều cuộn ngang
+          //     itemBuilder: (context, index) {
+          //       final colorItem = _colorsDataSource[index];
+          //       final isSelected = backgroundCategoryColor == colorItem;
+          //       return GestureDetector(
+          //         onTap: () {
+          //           print("click on: ${index}");
+          //           setState(() {
+          //             backgroundCategoryColor = colorItem;
+          //           });
+          //         },
+          //         child: Container(
+          //           width: 36,
+          //           height: 36,
+          //           margin: EdgeInsets.only(right: 12),
+          //           decoration: BoxDecoration(
+          //             borderRadius: BorderRadius.circular(36 / 2),
+          //             color: colorItem,
+          //           ),
+          //           child: isSelected
+          //               ? Icon(Icons.check, color: Colors.white)
+          //               : null,
+          //         ),
+          //       );
+          //     },
+          //     itemCount: _colorsDataSource.length,
+          //   ),
+          // ),
         ],
       ),
     );
@@ -246,9 +271,165 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
     );
   }
 
+  Widget _IconAndTextCategoryColor() {
+    return Container(
+      child: Column(
+        spacing: 16,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _titleField("category.icon_and_text_color".tr()),
+          GestureDetector(
+            onTap: _onChooseIconAndTextCategoryColor,
+            child: Container(
+              width: 36,
+              height: 36,
+              margin: EdgeInsets.only(right: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(36 / 2),
+                color: iconAndTextColor,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _previewCategory() {
+    return Container(
+      child: Column(
+        spacing: 16,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _titleField("category.preview_category".tr()),
+          Container(
+            height: 64,
+            width: 64,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(6),
+              color: backgroundCategoryColor,
+            ),
+
+            child: Icon(_iconSelected?.data, color: iconAndTextColor, size: 32),
+          ),
+          Text(
+            _nameCategoryController.text,
+            style: TextStyle(color: Colors.white, fontSize: 14),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _handleCreateCategory() {
     final categoryName = _nameCategoryController.text;
-    final categoryColor = selectedColor;
-    print("categoryName: $categoryName, categoryColor: $categoryColor");
+    final categoryBackgroundColor = '#${backgroundCategoryColor.toHexString()}';
+    final iconAndTextColorHex = '#${iconAndTextColor.toHexString()}';
+
+    if (categoryName.isEmpty || _iconSelected?.data == null) {
+      // không làm gì cả
+      // show thông báo cho user biết
+
+      return;
+    }
+
+    var config = Configuration.local([CategoryRealmEntity.schema]);
+    var realm = Realm(config);
+
+    var category = CategoryRealmEntity(
+      ObjectId(),
+      categoryName,
+      iconCodePoint: _iconSelected?.data.codePoint,
+      categoryBackgroundColor,
+      iconAndTextColorHex,
+    );
+    realm.write(() {
+      realm.add(category);
+    });
+    _iconSelected = null;
+    iconAndTextColor = Colors.white;
+    backgroundCategoryColor = Colors.white.withValues(alpha: 0.20);
+    setState(() {}); // viết như này nghĩa là  báo cho Flutter rằng dữ liệu của màn hình này vừa đổi, nên cần vẽ lại widget.
+    // show thông báo cho user biết
+    _showAlert("Thông báo", "Danh mục đã được tạo thành công");
+  }
+
+  void _chooseIcon() async {
+    IconPickerIcon? icon = await showIconPicker(
+      context,
+      configuration: SinglePickerConfiguration(
+        iconPackModes: [IconPack.material],
+      ),
+    );
+    setState(() {
+      _iconSelected = icon;
+    });
+  }
+
+  void _onChooseCategoryBackgroundColor() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        //  cách hiển thị list màu 1
+        return AlertDialog(
+          content: SingleChildScrollView(
+            child: MaterialPicker(
+              pickerColor: backgroundCategoryColor,
+              onColorChanged: (Color newColor) {
+                setState(() {
+                  backgroundCategoryColor = newColor;
+                });
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _onChooseIconAndTextCategoryColor() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        //  cách hiển thị list màu 2
+        return AlertDialog(
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: iconAndTextColor,
+              onColorChanged: (Color newColor) {
+                setState(() {
+                  iconAndTextColor = newColor;
+                });
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showAlert(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          // actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
