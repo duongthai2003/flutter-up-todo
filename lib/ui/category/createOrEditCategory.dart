@@ -323,37 +323,50 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
     );
   }
 
-  void _handleCreateCategory() {
-    final categoryName = _nameCategoryController.text;
-    final categoryBackgroundColor = '#${backgroundCategoryColor.toHexString()}';
-    final iconAndTextColorHex = '#${iconAndTextColor.toHexString()}';
+  void _handleCreateCategory() async {
+    try {
+      final categoryName = _nameCategoryController.text;
+      final categoryBackgroundColor =
+          '#${backgroundCategoryColor.toHexString()}';
+      final iconAndTextColorHex = '#${iconAndTextColor.toHexString()}';
+      print(Configuration.defaultRealmPath);
 
-    if (categoryName.isEmpty || _iconSelected?.data == null) {
-      // không làm gì cả
+      if (categoryName.isEmpty) {
+        // không làm gì cả
+        // show thông báo cho user biết
+        _showAlert("Thông báo", "Tên danh mục không được để trống");
+        return;
+      }
+      if (_iconSelected?.data == null) {
+        // không làm gì cả
+        // show thông báo cho user biết
+        _showAlert("Thông báo", "Icon không được để trống");
+        return;
+      }
+
+      var config = Configuration.local([CategoryRealmEntity.schema]);
+      var realm = Realm(config);
+
+      var category = CategoryRealmEntity(
+        ObjectId(),
+        categoryName,
+        iconCodePoint: _iconSelected?.data.codePoint,
+        categoryBackgroundColor,
+        iconAndTextColorHex,
+      );
+      await realm.writeAsync(() {
+        realm.add(category);
+      });
+      _iconSelected = null;
+      iconAndTextColor = Colors.white;
+      backgroundCategoryColor = Colors.white.withValues(alpha: 0.20);
+      setState(() {}); // viết như này nghĩa là  báo cho Flutter rằng dữ liệu của màn hình này vừa đổi, nên cần vẽ lại widget.
       // show thông báo cho user biết
-
-      return;
+      _showAlert("Thông báo", "Danh mục đã được tạo thành công");
+    } catch (error) {
+      print(error);
+      _showAlert("Thông báo", "Tạo danh mục thất bại");
     }
-
-    var config = Configuration.local([CategoryRealmEntity.schema]);
-    var realm = Realm(config);
-
-    var category = CategoryRealmEntity(
-      ObjectId(),
-      categoryName,
-      iconCodePoint: _iconSelected?.data.codePoint,
-      categoryBackgroundColor,
-      iconAndTextColorHex,
-    );
-    realm.write(() {
-      realm.add(category);
-    });
-    _iconSelected = null;
-    iconAndTextColor = Colors.white;
-    backgroundCategoryColor = Colors.white.withValues(alpha: 0.20);
-    setState(() {}); // viết như này nghĩa là  báo cho Flutter rằng dữ liệu của màn hình này vừa đổi, nên cần vẽ lại widget.
-    // show thông báo cho user biết
-    _showAlert("Thông báo", "Danh mục đã được tạo thành công");
   }
 
   void _chooseIcon() async {
@@ -390,21 +403,25 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
     );
   }
 
-  void _onChooseIconAndTextCategoryColor() async {
+  void _onChooseIconAndTextCategoryColor() {
     showDialog(
       context: context,
       builder: (context) {
         //  cách hiển thị list màu 2
         return AlertDialog(
-          content: SingleChildScrollView(
-            child: ColorPicker(
-              pickerColor: iconAndTextColor,
-              onColorChanged: (Color newColor) {
-                setState(() {
-                  iconAndTextColor = newColor;
-                });
-                Navigator.pop(context);
-              },
+          content: Listener(
+            onPointerUp: (_) {
+              Navigator.pop(context);
+            },
+            child: SingleChildScrollView(
+              child: ColorPicker(
+                pickerColor: iconAndTextColor,
+                onColorChanged: (Color newColor) {
+                  setState(() {
+                    iconAndTextColor = newColor;
+                  });
+                },
+              ),
             ),
           ),
         );
