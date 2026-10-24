@@ -1,3 +1,4 @@
+import 'package:fluter_app/ui/task/createTaskPage.dart';
 import 'package:flutter/material.dart';
 
 class MainPage extends StatefulWidget {
@@ -136,12 +137,25 @@ class _MainPageState extends State<MainPage> {
           color: Color(0xFF8687E7),
         ),
         child: IconButton(
-          onPressed: () => {print("Lam cai gi do")},
+          onPressed: () => _onSowCreateTask(),
           icon: Icon(Icons.add, color: Colors.white, size: 30),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation
           .centerDocked, // đặt vị trí của button nổi lên là ở giữa docked
+    );
+  }
+
+  void _onSowCreateTask() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return Padding(
+          padding: MediaQuery.of(context).viewInsets,
+          child: Container(color: Colors.white, child: CreateTaskPage()),
+        );
+      },
     );
   }
 }
