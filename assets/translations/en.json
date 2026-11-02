@@ -5,7 +5,9 @@
     "login": "Login",
     "create_account": "Create Account",
     "cancel": "Cancel",
-    "category":{
+    "ok": "OK",
+    "notification": "Notification",
+    "category": {
         "create_new_category": "Create new category",
         "edit_category": "Edit category",
         "category_name": "Category name",
@@ -14,7 +16,20 @@
         "create_category": "Create Category",
         "background_color": "Background icon",
         "icon_and_text_color": "Icon and text color",
-        "preview_category": "Preview category"
+        "preview_category": "Preview category",
+        "choose_category": "Choose Category",
+        "create_new": "Create New",
+        "edit": "Edit",
+        "name_required": "Category name cannot be empty",
+        "icon_required": "Icon cannot be empty",
+        "create_success": "Category created successfully",
+        "create_failed": "Failed to create category",
+        "update_success": "Category updated successfully",
+        "update_failed": "Failed to update category"
+    },
+    "task": {
+        "add_task": "Add Task",
+        "task_hint": "Do math homework",
+        "description": "Description"
     }
-
 }

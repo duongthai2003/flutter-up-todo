@@ -7,7 +7,8 @@ import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:realm/realm.dart';
 
 class CreateOrEditCategory extends StatefulWidget {
-  const CreateOrEditCategory({super.key});
+  final String? categoryId;
+  const CreateOrEditCategory({super.key, this.categoryId});
 
   @override
   State<CreateOrEditCategory> createState() => _CreateOrEditCategoryState();
@@ -55,6 +56,21 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
   IconPickerIcon? _iconSelected;
   late Color iconAndTextColor = Colors.white;
 
+  bool get isEdit {
+    return widget.categoryId != null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      // cái này là để chạy code sau khi widget được render
+      if (isEdit) {
+        _findCategoryByIdRealm(widget.categoryId!);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,13 +78,16 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         title: Text(
-          "category.create_new_category".tr(),
+          isEdit
+              ? "category.edit_category".tr()
+              : "category.create_new_category".tr(),
           style: TextStyle(
             color: Colors.white,
             fontSize: 20,
             fontWeight: FontWeight.w700,
           ),
         ),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: _buildBody(context),
     );
@@ -244,7 +263,9 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
             child: Text(
               "cancel".tr(),
               style: TextStyle(fontSize: 16, color: Color(0xFF8687E7)),
@@ -259,10 +280,12 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
               ),
             ),
             onPressed: () {
-              _handleCreateCategory();
+              isEdit ? _handleEditCategory() : _handleCreateCategory();
             },
             child: Text(
-              "category.create_category".tr(),
+              isEdit
+                  ? "category.edit_category".tr()
+                  : "category.create_category".tr(),
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
           ),
@@ -334,16 +357,16 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
       if (categoryName.isEmpty) {
         // không làm gì cả
         // show thông báo cho user biết
-        _showAlert("Thông báo", "Tên danh mục không được để trống");
+        _showAlert("notification".tr(), "category.name_required".tr());
         return;
       }
       if (_iconSelected?.data == null) {
         // không làm gì cả
         // show thông báo cho user biết
-        _showAlert("Thông báo", "Icon không được để trống");
+        _showAlert("notification".tr(), "category.icon_required".tr());
         return;
       }
-
+      // mở realm chuẩn bị ghi dữ liệu
       var config = Configuration.local([CategoryRealmEntity.schema]);
       var realm = Realm(config);
 
@@ -357,16 +380,21 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
       await realm.writeAsync(() {
         realm.add(category);
       });
-      _iconSelected = null;
-      iconAndTextColor = Colors.white;
-      backgroundCategoryColor = Colors.white.withValues(alpha: 0.20);
+      _initDataValue();
       setState(() {}); // viết như này nghĩa là  báo cho Flutter rằng dữ liệu của màn hình này vừa đổi, nên cần vẽ lại widget.
       // show thông báo cho user biết
-      _showAlert("Thông báo", "Danh mục đã được tạo thành công");
+      _showAlert("notification".tr(), "category.create_success".tr());
     } catch (error) {
       print(error);
-      _showAlert("Thông báo", "Tạo danh mục thất bại");
+      _showAlert("notification".tr(), "category.create_failed".tr());
     }
+  }
+
+  void _initDataValue() {
+    _nameCategoryController.text = "";
+    _iconSelected = null;
+    iconAndTextColor = Colors.white;
+    backgroundCategoryColor = Colors.white.withValues(alpha: 0.20);
   }
 
   void _chooseIcon() async {
@@ -429,8 +457,8 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
     );
   }
 
-  void _showAlert(String title, String message) {
-    showDialog(
+  Future<void> _showAlert(String title, String message) async {
+    await showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -442,11 +470,83 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text("OK"),
+              child: Text("ok".tr()),
             ),
           ],
         );
       },
     );
+  }
+
+  void _findCategoryByIdRealm(String id) async {
+    var config = Configuration.local([
+      CategoryRealmEntity.schema,
+    ]); // cấu hình realm
+    var realm = Realm(config); // mở realm
+
+    final category = realm.find<CategoryRealmEntity>(
+      ObjectId.fromHexString(id),
+    );
+    if (category == null) {
+      return;
+    }
+
+    // gán giá trị cho các trường
+
+    _nameCategoryController.text = category.name;
+    _iconSelected = IconPickerIcon(
+      data: IconData(category.iconCodePoint!, fontFamily: 'MaterialIcons'),
+      name: '',
+      pack: '',
+    );
+    backgroundCategoryColor =
+        colorFromHex(category.backgroundColorHex) ?? backgroundCategoryColor;
+    iconAndTextColor = colorFromHex(category.iconColorHex) ?? iconAndTextColor;
+    setState(() {});
+  }
+
+  void _handleEditCategory() async {
+    try {
+      final categoryName = _nameCategoryController.text;
+      final categoryBackgroundColor =
+          '#${backgroundCategoryColor.toHexString()}';
+      final iconAndTextColorHex = '#${iconAndTextColor.toHexString()}';
+
+      if (categoryName.isEmpty) {
+        _showAlert("notification".tr(), "category.name_required".tr());
+        return;
+      }
+      if (_iconSelected?.data == null) {
+        _showAlert("notification".tr(), "category.icon_required".tr());
+        return;
+      }
+
+      var config = Configuration.local([CategoryRealmEntity.schema]);
+      var realm = Realm(config);
+
+      final category = realm.find<CategoryRealmEntity>(
+        ObjectId.fromHexString(widget.categoryId!),
+      );
+      if (category == null) {
+        return;
+      }
+      await realm.writeAsync(() {
+        // ghi dữ liệu vào realm
+        category.name = categoryName;
+        category.iconCodePoint = _iconSelected?.data.codePoint;
+        category.backgroundColorHex = categoryBackgroundColor;
+        category.iconColorHex = iconAndTextColorHex;
+      });
+      _initDataValue();
+      setState(() {});
+      // show thông báo cho user biết
+      await _showAlert("notification".tr(), "category.update_success".tr());
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+    } catch (error) {
+      print(error);
+      _showAlert("notification".tr(), "category.update_failed".tr());
+    }
   }
 }

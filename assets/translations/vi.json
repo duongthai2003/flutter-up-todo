@@ -5,7 +5,9 @@
     "login": "Đăng nhập",
     "create_account": "Tạo tài khoản",
     "cancel": "Hủy",
-    "category":{
+    "ok": "OK",
+    "notification": "Thông báo",
+    "category": {
         "create_new_category": "Tạo danh mục",
         "edit_category": "Sửa danh mục",
         "category_name": "Tên danh mục",
@@ -14,7 +16,20 @@
         "create_category": "Tạo danh mục",
         "background_color": "Màu nền icon",
         "icon_and_text_color": "Màu icon và text",
-        "preview_category": "Xem trước danh mục"
+        "preview_category": "Xem trước danh mục",
+        "choose_category": "Chọn danh mục",
+        "create_new": "Tạo mới",
+        "edit": "Sửa",
+        "name_required": "Tên danh mục không được để trống",
+        "icon_required": "Icon không được để trống",
+        "create_success": "Danh mục đã được tạo thành công",
+        "create_failed": "Tạo danh mục thất bại",
+        "update_success": "Danh mục đã được sửa thành công",
+        "update_failed": "Sửa danh mục thất bại"
+    },
+    "task": {
+        "add_task": "Thêm công việc",
+        "task_hint": "Làm bài tập toán",
+        "description": "Mô tả"
     }
-
 }

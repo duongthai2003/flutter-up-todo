@@ -1,5 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:fluter_app/entities/category_realm_entity.dart';
+import 'package:fluter_app/models/categoryModel.dart';
 import 'package:fluter_app/ui/category/CategoryListPage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:realm/realm.dart';
 
 class CreateTaskPage extends StatefulWidget {
   const CreateTaskPage({super.key});
@@ -11,6 +16,7 @@ class CreateTaskPage extends StatefulWidget {
 class _CreateTaskPageState extends State<CreateTaskPage> {
   final _taskController = TextEditingController();
   final _descriptionController = TextEditingController();
+  CategoryModel? _categorySelected;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -22,8 +28,10 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            taskInput(_taskController, "Do math homework"),
+            taskInput(_taskController, "task.task_hint".tr()),
             descriptionField(),
+            if (_categorySelected != null)
+              _buildTaskCategory(_categorySelected!),
             iconList(),
           ],
         ),
@@ -37,7 +45,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _titleField("Add Task"),
+          _titleField("task.add_task".tr()),
           Container(
             margin: EdgeInsets.only(top: 10),
             child: TextFormField(
@@ -72,7 +80,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _titleField("Description"),
+          _titleField("task.description".tr()),
           Container(
             margin: EdgeInsets.only(top: 10),
             child: TextFormField(
@@ -86,7 +94,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                   borderRadius: BorderRadius.circular(4),
                   borderSide: BorderSide(width: 1, color: Color(0xF979797)),
                 ),
-                hintText: "Description",
+                hintText: "task.description".tr(),
                 hintStyle: TextStyle(
                   color: Color(0xFFAFAFAF),
                   fontSize: 16,
@@ -146,12 +154,89 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
     );
   }
 
-  void _showDialogChooseCategory() {
-    showGeneralDialog(
+  Widget _buildTaskCategory(CategoryModel category) {
+    return Container(
+      margin: EdgeInsets.only(top: 10),
+      child: Column(
+        spacing: 16,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _titleField("category.preview_category".tr()),
+          Column(
+            spacing: 16,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                height: 64,
+                width: 64,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                  color: colorFromHex(category.backgroundColorHex),
+                ),
+
+                child: Icon(
+                  IconData(
+                    category.iconCodePoint!,
+                    fontFamily: 'MaterialIcons',
+                  ),
+                  color: colorFromHex(category.iconColorHex),
+                  size: 32,
+                ),
+              ),
+              Text(
+                category.name,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white, fontSize: 14),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDialogChooseCategory() async {
+    final result = await showGeneralDialog<CategoryModel>(
       context: context,
+      barrierLabel: "chọn category", // chỉ là lable user không thấy đucợ
+
+      barrierDismissible: true, // click ra ngoài để tắt
+      barrierColor: Colors.black.withValues(alpha: 0.5), // màu overlay
       pageBuilder: (_, __, ___) {
         return CategoryListPage();
       },
+    );
+
+    if (!mounted) return;
+    if (result != null) {
+      setState(() {
+        _categorySelected = result;
+      });
+      return;
+    }
+
+    final selectedId = _categorySelected?.id;
+    if (selectedId == null) return;
+    final updatedCategory = _findCategoryById(selectedId);
+    setState(() {
+      _categorySelected = updatedCategory ?? _categorySelected;
+    });
+  }
+
+  CategoryModel? _findCategoryById(String id) {
+    final config = Configuration.local([CategoryRealmEntity.schema]);
+    final realm = Realm(config);
+    final category = realm.find<CategoryRealmEntity>(
+      ObjectId.fromHexString(id),
+    );
+    if (category == null) return null;
+    return CategoryModel(
+      id: category.id.hexString,
+      name: category.name,
+      iconCodePoint: category.iconCodePoint,
+      backgroundColorHex: category.backgroundColorHex,
+      iconColorHex: category.iconColorHex,
     );
   }
 }
