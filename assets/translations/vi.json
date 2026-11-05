@@ -30,6 +30,7 @@
     "task": {
         "add_task": "Thêm công việc",
         "task_hint": "Làm bài tập toán",
-        "description": "Mô tả"
+        "description": "Mô tả",
+        "taskTime": "Thời gian:"
     }
 }

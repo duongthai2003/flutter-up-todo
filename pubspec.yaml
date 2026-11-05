@@ -17,6 +17,7 @@ dependencies:
   realm: ^20.2.0
   flutter_iconpicker: ^4.0.3
   flutter_colorpicker: ^1.1.0
+  intl: any
 
 dev_dependencies:
   flutter_test:

@@ -30,6 +30,7 @@
     "task": {
         "add_task": "Add Task",
         "task_hint": "Do math homework",
-        "description": "Description"
+        "description": "Description",
+        "taskTime": "Task Time:"
     }
 }

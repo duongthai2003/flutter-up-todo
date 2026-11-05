@@ -17,6 +17,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
   final _taskController = TextEditingController();
   final _descriptionController = TextEditingController();
   CategoryModel? _categorySelected;
+  DateTime? _taskDateTimeSelected;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -30,6 +31,9 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
           children: [
             taskInput(_taskController, "task.task_hint".tr()),
             descriptionField(),
+            if (_taskDateTimeSelected != null)
+              _buildTaskDateCategory(_taskDateTimeSelected!),
+
             if (_categorySelected != null)
               _buildTaskCategory(_categorySelected!),
             iconList(),
@@ -129,7 +133,9 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
               spacing: 32,
               children: [
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _selectTaskTime();
+                  },
                   icon: Image.asset("assets/images/timer.png"),
                 ),
                 IconButton(
@@ -162,7 +168,14 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _titleField("category.preview_category".tr()),
+          Text(
+            "category.preview_category".tr(),
+            style: TextStyle(
+              color: Color(0xFFAFAFAF),
+              fontWeight: FontWeight.w400,
+              fontSize: 18,
+            ),
+          ),
           Column(
             spacing: 16,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -237,6 +250,79 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
       iconCodePoint: category.iconCodePoint,
       backgroundColorHex: category.backgroundColorHex,
       iconColorHex: category.iconColorHex,
+    );
+  }
+
+  void _selectTaskTime() async {
+    final date = await showDatePicker(
+      context: context,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(Duration(days: 365)),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: Color(0xFF8687E7),
+              onSurface: Colors.white,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (date == null) return;
+    if (!context.mounted) return;
+
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: Color(0xFF8687E7),
+              onSurface: Colors.white,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (time == null) return;
+    final dateTimeSelected = date.copyWith(
+      hour: time.hour,
+      minute: time.minute,
+      second: 0,
+    );
+
+    _taskDateTimeSelected = dateTimeSelected;
+    setState(() {});
+  }
+
+  Widget _buildTaskDateCategory(DateTime dateTimeSelected) {
+    return Container(
+      margin: EdgeInsets.only(top: 10),
+      child: Row(
+        spacing: 16,
+        children: [
+          Text(
+            "task.taskTime".tr(),
+            style: TextStyle(
+              color: Color(0xFFAFAFAF),
+              fontWeight: FontWeight.w400,
+              fontSize: 18,
+            ),
+          ),
+          Text(
+            DateFormat('dd/MM/yyyy HH:mm').format(dateTimeSelected),
+            style: TextStyle(
+              color: Color(0xFFAFAFAF),
+              fontWeight: FontWeight.w400,
+              fontSize: 18,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
