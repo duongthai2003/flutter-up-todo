@@ -7,6 +7,7 @@
     "cancel": "Cancel",
     "ok": "OK",
     "notification": "Notification",
+    "save": "Save",
     "category": {
         "create_new_category": "Create new category",
         "edit_category": "Edit category",
@@ -31,6 +32,7 @@
         "add_task": "Add Task",
         "task_hint": "Do math homework",
         "description": "Description",
-        "taskTime": "Task Time:"
+        "taskTime": "Task Time:",
+        "task_priority": "Task Priority"
     }
 }

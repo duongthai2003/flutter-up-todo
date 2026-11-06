@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:fluter_app/entities/category_realm_entity.dart';
 import 'package:fluter_app/models/categoryModel.dart';
 import 'package:fluter_app/ui/category/CategoryListPage.dart';
+import 'package:fluter_app/ui/priority/taskPriorityListPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:realm/realm.dart';
@@ -18,6 +19,8 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
   final _descriptionController = TextEditingController();
   CategoryModel? _categorySelected;
   DateTime? _taskDateTimeSelected;
+  int? _taskPrioritySelected;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,6 +39,8 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
 
             if (_categorySelected != null)
               _buildTaskCategory(_categorySelected!),
+            if (_taskPrioritySelected != null)
+              _buildTaskPriority(_taskPrioritySelected!),
             iconList(),
           ],
         ),
@@ -145,7 +150,9 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                   icon: Image.asset("assets/images/tag.png"),
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _showDialogChooseTaskPriority();
+                  },
                   icon: Image.asset("assets/images/flag.png"),
                 ),
               ],
@@ -237,6 +244,26 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
     });
   }
 
+  void _showDialogChooseTaskPriority() async {
+    final result = await showGeneralDialog(
+      context: context,
+      barrierLabel: "",
+      barrierDismissible: true,
+      barrierColor: Colors.black.withValues(alpha: 0.5),
+      pageBuilder: (_, __, ___) {
+        return TaskPriorityListPage();
+      },
+    );
+
+    if (result != null && result is Map<String, dynamic>) {
+      setState(() {
+        final priority = result["priority"];
+        _taskPrioritySelected = priority;
+      });
+      return;
+    }
+  }
+
   CategoryModel? _findCategoryById(String id) {
     final config = Configuration.local([CategoryRealmEntity.schema]);
     final realm = Realm(config);
@@ -319,6 +346,59 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
               color: Color(0xFFAFAFAF),
               fontWeight: FontWeight.w400,
               fontSize: 18,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTaskPriority(int priority) {
+    return Container(
+      margin: EdgeInsets.only(top: 10),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "category.preview_category".tr(),
+            style: TextStyle(
+              color: Color(0xFFAFAFAF),
+              fontWeight: FontWeight.w400,
+              fontSize: 18,
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(top: 10),
+            child: Container(
+              height: 64,
+              width: 64,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(6),
+                color: Color(0xFF8687E7),
+              ),
+
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 5,
+                children: [
+                  Image.asset(
+                    "assets/images/flag.png",
+                    width: 24,
+                    height: 24,
+                    fit: BoxFit.fill,
+                  ),
+                  Text(
+                    priority.toString(),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

@@ -7,6 +7,7 @@
     "cancel": "Hủy",
     "ok": "OK",
     "notification": "Thông báo",
+    "save": "Lưu",
     "category": {
         "create_new_category": "Tạo danh mục",
         "edit_category": "Sửa danh mục",
@@ -31,6 +32,7 @@
         "add_task": "Thêm công việc",
         "task_hint": "Làm bài tập toán",
         "description": "Mô tả",
-        "taskTime": "Thời gian:"
+        "taskTime": "Thời gian:",
+        "task_priority": "Độ ưu tiên công việc"
     }
 }
