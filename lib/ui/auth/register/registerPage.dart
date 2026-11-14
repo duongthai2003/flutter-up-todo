@@ -1,9 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fluter_app/component/OutlinedLoginButton.dart';
 import 'package:fluter_app/component/PrimaryButton.dart';
+import 'package:fluter_app/ui/auth/login/bloc/login_cubit.dart';
 import 'package:fluter_app/ui/auth/login/loginPage.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -240,9 +242,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) {
-                        return LoginPage();
-                      },
+                      builder: (context) => BlocProvider(
+                        create: (_) => LoginCubit(),
+                        child: const LoginPage(),
+                      ),
                     ),
                   );
                 },

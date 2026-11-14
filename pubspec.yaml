@@ -18,6 +18,9 @@ dependencies:
   flutter_iconpicker: ^4.0.3
   flutter_colorpicker: ^1.1.0
   intl: any
+  # state management
+  flutter_bloc: ^9.1.1
+  equatable: ^2.0.5
 
 dev_dependencies:
   flutter_test:

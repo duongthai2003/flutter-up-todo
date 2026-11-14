@@ -1,11 +1,11 @@
-import 'dart:ffi';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fluter_app/component/OutlinedLoginButton.dart';
 import 'package:fluter_app/component/PrimaryButton.dart';
+import 'package:fluter_app/ui/auth/login/bloc/login_cubit.dart';
 import 'package:fluter_app/ui/auth/register/registerPage.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -17,26 +17,30 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   var _autoValidateMode = AutovalidateMode.disabled;
+  final _emailTextController = TextEditingController();
+  final _passwordTextController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF121212),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Container(
         margin: EdgeInsets.symmetric(horizontal: 24).copyWith(top: 41),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _pageTitle(),
-            _buildFormLogin(),
-            _buildDivider(),
-            _buildSocialLogin(),
-            _buildHaveNoAccount(),
-          ],
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _pageTitle(),
+              _buildFormLogin(),
+              _buildDivider(),
+              _buildSocialLogin(),
+              _buildHaveNoAccount(),
+            ],
+          ),
         ),
       ),
     );
@@ -77,6 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 TextFormField(
+                  controller: _emailTextController,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -128,6 +133,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 TextFormField(
+                  controller: _passwordTextController,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -178,6 +184,11 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _onHandleLoginSubmit() {
+    final loginCubit = context.read<LoginCubit>();
+    final email = _emailTextController.text;
+    final password = _passwordTextController.text;
+    loginCubit.login(email, password);
+
     final isValid = _formKey.currentState!.validate();
 
     if (_autoValidateMode == AutovalidateMode.disabled) {
