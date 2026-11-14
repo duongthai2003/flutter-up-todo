@@ -34,5 +34,8 @@
         "description": "Description",
         "taskTime": "Task Time:",
         "task_priority": "Task Priority"
+    },
+    "auth": {
+        "register": "Register"
     }
 }

@@ -1,6 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fluter_app/component/buttonBackIcon.dart';
 import 'package:fluter_app/component/OutlinedLoginButton.dart';
+import 'package:fluter_app/ui/auth/login/login.dart';
+import 'package:fluter_app/ui/auth/login/loginPage.dart';
+import 'package:fluter_app/ui/auth/register/registerPage.dart';
 import 'package:fluter_app/ui/onBoarding/onBoardingPageView.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -115,7 +118,10 @@ class StartScreen extends StatelessWidget {
           ElevatedButton(
             // ElevatedButton tạo button nền màu
             onPressed: () {
-              print("login");
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPage()),
+              );
             },
             child: Text(
               "login".tr().toUpperCase(),
@@ -133,7 +139,15 @@ class StartScreen extends StatelessWidget {
               minimumSize: Size.fromHeight(48),
             ),
           ),
-          OutlinedLoginButton(label: "create_account".tr()),
+          OutlinedLoginButton(
+            label: "create_account".tr(),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => RegisterPage()),
+              );
+            },
+          ),
         ],
       ),
     );

@@ -34,5 +34,8 @@
         "description": "Mô tả",
         "taskTime": "Thời gian:",
         "task_priority": "Độ ưu tiên công việc"
+    },
+    "auth": {
+        "register": "Đăng ký"
     }
 }

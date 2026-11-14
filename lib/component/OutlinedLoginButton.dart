@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 
-Widget OutlinedLoginButton({Widget? icon, required String label}) {
+Widget OutlinedLoginButton({
+  Widget? icon,
+  required String label,
+  Function()? onPressed,
+}) {
   return OutlinedButton(
-    onPressed: () {},
+    onPressed: onPressed,
     child: Row(
       spacing: 10,
       mainAxisAlignment: MainAxisAlignment.center,
