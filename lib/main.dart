@@ -8,11 +8,23 @@ import 'package:fluter_app/ui/splash/splash.dart';
 import 'package:fluter_app/ui/start/startScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+import 'firebase_options.dart';
 
 void main() async {
   // khởi tạo EasyLocalization để sử dụng đa ngôn ngữ
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
+
+  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    print('❌ Firebase connection failed: $e');
+  }
 
   runApp(
     // thêm các loại ngôn ngữ được hỗ trợ
